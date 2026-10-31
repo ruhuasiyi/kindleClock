@@ -47,7 +47,6 @@ jobs:
       - name: 组装解压结构
         run: |
           cp config.example.toml stage/kindleClock/
-          cp -r scripts/device/upstart stage/kindleClock/upstart
           cp -r kindleClock stage/extensions/kindleClock
 
       - name: 打包
