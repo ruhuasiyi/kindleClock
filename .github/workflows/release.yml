@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 新建仓库的 GITHUB_TOKEN 默认只读，创建 Release 需要写权限
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
