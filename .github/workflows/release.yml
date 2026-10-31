@@ -1,0 +1,67 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: 测试
+        run: go test ./...
+
+      - name: 交叉编译
+        env:
+          CGO_ENABLED: '0'
+          GOOS: linux
+          GOARCH: arm
+          GOARM: '7'
+        run: |
+          VERSION="${GITHUB_REF_NAME:-dev}"
+          mkdir -p stage/kindleClock stage/extensions
+          go build -trimpath \
+            -ldflags "-s -w -X main.buildVersion=${VERSION}" \
+            -o stage/kindleClock/kindleclock ./src/kindleclock
+
+      - name: 校验产物
+        run: |
+          file stage/kindleClock/kindleclock
+          readelf -h stage/kindleClock/kindleclock | grep 'Machine:.*ARM'
+          if readelf -l stage/kindleClock/kindleclock | grep -q INTERP; then
+            echo "产物依赖动态链接器，不是静态链接" >&2
+            exit 1
+          fi
+
+      # 压缩包在设备的 USB 盘根目录解压即可：盘根就是 /mnt/us
+      #
+      #   stage/kindleClock/            -> /mnt/us/kindleClock
+      #   stage/extensions/kindleClock/ -> /mnt/us/extensions/kindleClock
+      - name: 组装解压结构
+        run: |
+          cp config.example.toml stage/kindleClock/
+          cp -r scripts/device/upstart stage/kindleClock/upstart
+          cp -r kindleClock stage/extensions/kindleClock
+
+      - name: 打包
+        run: |
+          VERSION="${GITHUB_REF_NAME:-dev}"
+          cd stage && zip -r "../kindleclock-${VERSION}.zip" kindleClock extensions
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kindleclock-zip
+          path: kindleclock-*.zip
+
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: kindleclock-*.zip
+          generate_release_notes: true

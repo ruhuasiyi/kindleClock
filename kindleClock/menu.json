@@ -1,0 +1,40 @@
+{
+	"items": [
+		{
+			"name": "KindleClock",
+			"priority": 1,
+			"items": [
+				{
+					"name": "启动",
+					"priority": 1,
+					"action": "bin/start.sh",
+					"status": false
+				},
+				{
+					"name": "停止",
+					"priority": 2,
+					"action": "bin/stop.sh",
+					"status": false
+				},
+				{
+					"name": "立即全屏刷新",
+					"priority": 3,
+					"action": "bin/refresh.sh",
+					"status": false
+				},
+				{
+					"name": "显示状态",
+					"priority": 4,
+					"action": "bin/status.sh",
+					"status": false
+				},
+				{
+					"name": "切换独占屏幕模式",
+					"priority": 5,
+					"action": "bin/gui-toggle.sh",
+					"status": false
+				}
+			]
+		}
+	]
+}

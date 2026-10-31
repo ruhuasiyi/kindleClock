@@ -1,0 +1,60 @@
+# 本地配置（含教务密码），永不提交
+config.toml
+config.local.toml
+
+# 学校教务 API 的私有实现（开源仓库不包含）
+src/internal/source/timetable_impl.go
+src/internal/source/timetable_impl_test.go
+internal/source/timetable_impl.go
+internal/source/timetable_impl_test.go
+
+# 运行期产物
+work/
+log/
+out.png
+preview/
+testdata/tmp/
+
+# 二进制（只忽略仓库根目录的构建产物；cmd/kindleclock/ 是源码目录）
+/kindleclock
+/dist/
+
+# 字体（体积大，部署时单独拷）
+fonts/*.ttf
+fonts/*.otf
+
+# 构建产物
+build/
+
+# SDD 工作区（sdd 技能的 scratch）
+.superpowers/
+
+# 内部工作文档：设计规格与实现计划，含教务接口的详细契约，不随公开仓库分发
+docs/superpowers/
+
+# 给 Claude 的工作须知
+CLAUDE.md
+
+# 与本项目无关的第三方工具输出
+model/
+
+# 改 root 密码的临时扩展：内嵌了本机设备的实际 root 密码，不随公开仓库分发
+scripts/device/kual/
+
+# 重建仓库前保留的旧历史（含私有实现，不随公开仓库分发）
+.git.bak*/
+
+# 真机实测记录：含设备标识、局域网地址与原始测量数据，不随公开仓库分发
+docs/spikes.md
+
+# 本地构建与部署脚本：面向本机环境（SSH 地址、设备路径），不随公开仓库分发
+scripts/
+
+# 改密码工具的内嵌凭据，即便将来 scripts/ 取消排除也要挡住
+scripts/device/kual/
+
+# 开发期的设备探测工具：面向本机硬件，不随公开仓库分发
+src/spike/
+
+# 构建产物
+build/

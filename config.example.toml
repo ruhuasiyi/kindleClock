@@ -1,0 +1,60 @@
+# KindleClock 配置样例。
+# 部署时复制为 /mnt/us/kindleClock/config.toml 并填入真实值（不会提交）。
+# config.toml 已在 .gitignore 中，不会被提交。
+
+[time]
+# 设备系统时区是 "GMT+8:0100"（非 IANA 名称），Go 无法 LoadLocation。
+# 这里直接给 UTC 偏移，避免依赖 tzdata。
+utc_offset_minutes = 480
+
+[weather]
+enabled = true
+city = "昆明"
+refresh_minutes = 30
+stale_after_minutes = 120
+
+[timetable]
+# 课表依赖学校教务 API 的私有实现（internal/source/timetable_impl.go）。
+# 该文件被 .gitignore 排除，开源仓库里不包含它。
+#
+# 开源版本中这一段即使 enabled = true，也只会得到
+# 「课表功能未启用：本仓库是开源版本，不包含教务接口实现」，拿不到任何数据。
+#
+# 在自己仓库里启用：把私有实现放回 internal/source/，然后用
+#   TAGS=privatesource sh scripts/build.sh
+# （或 go build -tags privatesource）构建。没有私有实现时保持 enabled = false。
+enabled = false
+base_url = "https://timetable.example.com"
+student_id = "CHANGE-ME"
+password = "CHANGE-ME"
+refresh_minutes = 10
+stale_after_minutes = 60
+
+[display]
+# cw = 顺时针，ccw = 逆时针。取决于设备怎么摆放。
+# 用户确认：Kindle 横放时右侧边朝上 → 用 ccw。
+rotate = "ccw"
+fbink = "fbink"
+font_regular = "/usr/java/lib/fonts/STHeitiMedium.ttf"
+font_bold = "/usr/java/lib/fonts/STHeitiBold.ttf"
+work_dir = "/mnt/us/kindleClock/work"
+full_refresh_every = 240
+prevent_screensaver = true
+stop_gui_on_start = false
+# 每分钟核对一次「屏幕上的是不是我们画的东西」，对不上就全屏重绘。
+# 电子墨水屏上这两者是两回事：Kindle 原生界面、KUAL 提示、框架重启
+# 都能把我们的画面盖掉，而脏区比对只知道自己上一帧画了什么。
+# 关掉的话，屏幕被盖之后只有时钟区会继续更新，其余部分永远停在别人的
+# 画面上，而且不会有任何报错。默认开。
+verify_screen = true
+
+# 右下角显示电量百分比。读不到 sysfs 时自动不显示。
+show_battery = true
+
+[periods]
+times = [
+  "08:20-09:00", "09:05-09:45", "10:00-10:40", "10:45-11:25",
+  "11:30-12:10", "13:30-14:10", "14:15-14:55", "15:10-15:50",
+  "15:55-16:35", "16:40-17:20", "18:00-18:40", "18:45-19:25",
+  "19:40-20:20", "20:25-21:05",
+]
